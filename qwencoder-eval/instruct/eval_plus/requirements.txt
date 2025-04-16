@@ -3,3 +3,4 @@ accelerate
 vllm
 stop-sequencer
 evalplus==0.2.1
+ollama
