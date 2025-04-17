@@ -139,16 +139,16 @@ class AWQChatML(VLlmAWQDecoder):
             assert self.temperature > 0, "Temperature must be greater than 0!"
 
         input = f"""<|im_start|>system
-You are an intelligent programming assistant to produce Python algorithmic solutions<|im_end|>
-<|im_start|>user
-Can you complete the following Python function?
-```python
-{prompt}
-```
-<|im_end|>
-<|im_start|>assistant
-```python
-"""
+                You are an intelligent programming assistant to produce Python algorithmic solutions<|im_end|>
+                <|im_start|>user
+                Can you complete the following Python function?
+                ```python
+                {prompt}
+                ```
+                <|im_end|>
+                <|im_start|>assistant
+                ```python
+                """
         return VLlmDecoder.codegen(self, input, do_sample, num_samples)
 
 
