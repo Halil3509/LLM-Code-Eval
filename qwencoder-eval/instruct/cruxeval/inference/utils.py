@@ -66,26 +66,39 @@ class TokenizedDataset(IterableDataset):
 def complete_code(
     task,
     model,
-    sampling_params,
     prompts,
     task_ids,
     postprocess=True,
 ):
+    """
+    Generate code completions for the given prompts using the provided model.
 
-    outputs = model.generate(
-        prompts=prompts,
-        sampling_params=sampling_params,
-        use_tqdm=True,
-    )
+    Args:
+        task: The task object containing prompt and postprocessing logic.
+        model: The model used for code generation.
+        prompts: A list of prompt strings to generate completions for.
+        task_ids: A list of task identifiers corresponding to the prompts.
+        postprocess: Whether to apply postprocessing to the generated code.
 
-    generated_texts = [output.outputs[0].text for output in outputs]
-    combined_texts = [prompt + generated_text for prompt, generated_text in zip(prompts, generated_texts)]
+    Returns:
+        A tuple of two dictionaries:
+        - code_gens: Postprocessed code completions grouped by task_id.
+        - code_gens_raw: Raw code completions grouped by task_id.
+    """
+    combined_texts = []
+    for prompt in prompts:
+        outputs = model.codegen(prompt=prompt, num_samples=1)
+        combined_text = prompt + outputs[0]
+        combined_texts.append(combined_text)
 
-    code_gens, code_gens_raw = defaultdict(list), defaultdict(list)
+    code_gens = defaultdict(list)
+    code_gens_raw = defaultdict(list)
     for task_id, text in zip(task_ids, combined_texts):
         if postprocess:
-            text_processed = task.postprocess_generation(text, int(task_id.split("_")[-1]))
-        code_gens[task_id].append(text_processed)
+            text_processed = task.postprocess_generation(
+                text, int(task_id.split("_")[-1])
+            )
+            code_gens[task_id].append(text_processed)
         code_gens_raw[task_id].append(text)
 
     return code_gens, code_gens_raw

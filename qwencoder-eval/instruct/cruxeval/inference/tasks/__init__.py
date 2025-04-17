@@ -12,12 +12,9 @@ TASK_REGISTRY = {
 ALL_TASKS = sorted(list(TASK_REGISTRY))
 
 
-def get_task(task_name, cot = False, phind_output = False):
+def get_task(task_name, cot = False):
     try:
-        if phind_output:
-            return TASK_REGISTRY[task_name](cot = cot, phind_output = True)
-        else:
-            return TASK_REGISTRY[task_name](cot = cot)
+        return TASK_REGISTRY[task_name](cot = cot)
     except KeyError:
         print("Available tasks:")
         pprint(TASK_REGISTRY)
